@@ -1,0 +1,16 @@
+services:
+  player_db:
+    image: postgres:17-alpine
+    container_name: postgres_player
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: player_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - player_data:/var/lib/postgresql/data
+
+volumes:
+  player_data:
+
