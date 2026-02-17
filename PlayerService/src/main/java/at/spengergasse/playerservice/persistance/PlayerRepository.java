@@ -1,5 +1,6 @@
-package at.spengergasse.playerservice;
+package at.spengergasse.playerservice.persistance;
 
+import at.spengergasse.playerservice.model.Player;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package at.spengergasse.playerservice;
+package at.spengergasse.playerservice.model;
 
 import jakarta.persistence.*;
 

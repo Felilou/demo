@@ -17,7 +17,7 @@
                     </div>
                     <div th:if="${player != null}">
                         <!-- Username Update Form -->
-                        <form th:action="@{/account}" method="post" class="mb-4">
+                        <form th:action="@{/auth/account}" method="post" class="mb-4">
                             <div class="mb-3">
                                 <label class="form-label">Neuer Username</label>
                                 <input type="text" name="username" th:value="${player.username}" class="form-control" required />
@@ -29,7 +29,7 @@
                             <div th:if="${usernameConflict}" class="alert alert-danger">Dieser Username ist bereits vergeben!</div>
                         </div>
                         <!-- Password Update Form -->
-                        <form th:action="@{/account}" method="post">
+                        <form th:action="@{/auth/account}" method="post">
                             <div class="mb-3">
                                 <label class="form-label">Neues Passwort</label>
                                 <input type="password" name="password" class="form-control" placeholder="Neues Passwort" required />

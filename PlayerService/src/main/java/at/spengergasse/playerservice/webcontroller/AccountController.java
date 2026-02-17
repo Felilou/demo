@@ -1,5 +1,8 @@
-package at.spengergasse.playerservice;
+package at.spengergasse.playerservice.webcontroller;
 
+import at.spengergasse.playerservice.model.Player;
+import at.spengergasse.playerservice.persistance.PlayerRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,18 +13,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Controller
 @RequestMapping("/auth")
+@AllArgsConstructor
 public class AccountController {
+
     private final PlayerRepository playerRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public AccountController(PlayerRepository playerRepository, PasswordEncoder passwordEncoder) {
-        this.playerRepository = playerRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @GetMapping("/account")
     public String accountPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
@@ -47,7 +49,7 @@ public class AccountController {
         if (userDetails != null) {
             player = playerRepository.findByUsername(userDetails.getUsername()).orElse(null);
             if (player != null) {
-                // Username ändern, wenn ein neuer Wert übergeben wurde und er sich unterscheidet
+                // Username ändern
                 if (username != null && !username.isBlank() && !username.equals(player.getUsername())) {
                     Player existing = playerRepository.findByUsername(username).orElse(null);
                     if (existing != null) {
@@ -55,18 +57,30 @@ public class AccountController {
                     } else {
                         player.setUsername(username);
                         usernameSuccess = true;
+                        playerRepository.save(player); // Speichere zuerst den neuen Username
+                        // SecurityContext auf neuen Username aktualisieren
+                        UserDetails updatedUser = org.springframework.security.core.userdetails.User
+                            .withUsername(username)
+                            .password(player.getPassword())
+                            .authorities(userDetails.getAuthorities())
+                            .build();
+                        Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                            updatedUser,
+                            player.getPassword(),
+                            updatedUser.getAuthorities()
+                        );
+                        SecurityContextHolder.getContext().setAuthentication(newAuth);
                     }
                 }
-                // Passwort ändern, wenn beide Felder ausgefüllt und gleich sind
+                // Passwort ändern
                 if (password != null && !password.isBlank()) {
-                    if (passwordConfirm != null && password.equals(passwordConfirm)) {
+                    if (password.equals(passwordConfirm)) {
                         player.setPassword(passwordEncoder.encode(password));
                         passwordSuccess = true;
                     } else {
                         passwordMismatch = true;
                     }
                 }
-                // Nur speichern, wenn sich etwas geändert hat
                 if (usernameSuccess || passwordSuccess) {
                     playerRepository.save(player);
                 }

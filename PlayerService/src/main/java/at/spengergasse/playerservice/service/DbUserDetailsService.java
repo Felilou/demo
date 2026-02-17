@@ -1,5 +1,8 @@
-package at.spengergasse.playerservice;
+package at.spengergasse.playerservice.service;
 
+import at.spengergasse.playerservice.model.Player;
+import at.spengergasse.playerservice.persistance.PlayerRepository;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +13,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class DbUserDetailsService implements UserDetailsService {
-    Logger logger = LoggerFactory.getLogger(DbUserDetailsService.class);
 
     private final PlayerRepository playerRepository;
 
-    @Autowired
-    public DbUserDetailsService(PlayerRepository playerRepository) {
-        this.playerRepository = playerRepository;
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         Player player = playerRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
@@ -29,5 +28,6 @@ public class DbUserDetailsService implements UserDetailsService {
                 .password(player.getPassword())
                 .roles("USER")
                 .build();
+
     }
 }

@@ -1,8 +1,8 @@
-package at.spengergasse.playerservice;
+package at.spengergasse.playerservice.webcontroller;
 
-import at.spengergasse.playerservice.Player;
-import at.spengergasse.playerservice.PlayerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import at.spengergasse.playerservice.model.Player;
+import at.spengergasse.playerservice.persistance.PlayerRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,20 +10,29 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Controller
 @RequestMapping("/auth")
-public class SignupWebController {
+@AllArgsConstructor
+public class AuthController {
+
     private final PasswordEncoder passwordEncoder;
     private final PlayerRepository playerRepository;
 
-    @Autowired
-    public SignupWebController(PasswordEncoder passwordEncoder, PlayerRepository playerRepository) {
-        this.passwordEncoder = passwordEncoder;
-        this.playerRepository = playerRepository;
+    @GetMapping("/login")
+    public String loginPage(@RequestParam(value = "error", required = false) String error,
+                            @RequestParam(value = "logout", required = false) String logout,
+                            @RequestParam(value = "signupSuccess", required = false) String signupSuccess,
+                            Model model) {
+        if (error != null) model.addAttribute("error", true);
+        if (logout != null) model.addAttribute("logout", true);
+        if (signupSuccess != null) model.addAttribute("signupSuccess", true);
+        return "login";
+    }
+
+    @GetMapping("/logout")
+    public String logoutPage() {
+        return "redirect:/auth/login?logout";
     }
 
     @GetMapping("/signup")
@@ -33,9 +42,10 @@ public class SignupWebController {
 
     @PostMapping("/signup")
     public String signup(@RequestParam String username,
-                        @RequestParam String password,
-                        @RequestParam String passwordConfirm,
-                        Model model) {
+                         @RequestParam String password,
+                         @RequestParam String passwordConfirm,
+                         Model model) {
+
         boolean signupConflict = false;
         boolean signupMismatch = false;
         boolean signupError = false;
@@ -58,9 +68,11 @@ public class SignupWebController {
                 signupError = true;
             }
         }
+
         model.addAttribute("signupConflict", signupConflict);
         model.addAttribute("signupMismatch", signupMismatch);
         model.addAttribute("signupError", signupError);
         return "signup";
     }
+
 }
