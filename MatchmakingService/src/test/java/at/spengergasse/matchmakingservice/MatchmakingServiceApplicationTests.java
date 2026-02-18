@@ -1,10 +1,10 @@
-package at.spengergasse.mulitplayerpong;
+package at.spengergasse.matchmakingservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MulitplayerPongApplicationTests {
+class MatchmakingServiceApplicationTests {
 
     @Test
     void contextLoads() {
