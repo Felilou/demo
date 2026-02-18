@@ -1,15 +1,21 @@
 package at.spengergasse.playerservice.webcontroller;
 
+import at.spengergasse.dto.SignupDTO;
 import at.spengergasse.playerservice.model.Player;
 import at.spengergasse.playerservice.persistance.PlayerRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/auth")
@@ -20,9 +26,9 @@ public class AuthController {
     private final PlayerRepository playerRepository;
 
     @GetMapping("/login")
-    public String loginPage(@RequestParam(value = "error", required = false) String error,
-                            @RequestParam(value = "logout", required = false) String logout,
-                            @RequestParam(value = "signupSuccess", required = false) String signupSuccess,
+    public String loginPage(@org.springframework.web.bind.annotation.RequestParam(value = "error", required = false) String error,
+                            @org.springframework.web.bind.annotation.RequestParam(value = "logout", required = false) String logout,
+                            @org.springframework.web.bind.annotation.RequestParam(value = "signupSuccess", required = false) String signupSuccess,
                             Model model) {
         if (error != null) model.addAttribute("error", true);
         if (logout != null) model.addAttribute("logout", true);
@@ -36,43 +42,56 @@ public class AuthController {
     }
 
     @GetMapping("/signup")
-    public String signupForm() {
+    public String signupForm(Model model) {
+        model.addAttribute("signupDTO", new SignupDTO("", "", ""));
         return "signup";
     }
 
     @PostMapping("/signup")
-    public String signup(@RequestParam String username,
-                         @RequestParam String password,
-                         @RequestParam String passwordConfirm,
+    public String signup(@Valid @ModelAttribute("signupDTO") SignupDTO signupDTO,
+                         BindingResult bindingResult,
                          Model model) {
-
         boolean signupConflict = false;
         boolean signupMismatch = false;
         boolean signupError = false;
+        List<String> formErrors = null;
 
-        if (username == null || username.isBlank() || password == null || password.isBlank()) {
-            signupError = true;
-        } else if (!password.equals(passwordConfirm)) {
+        if (bindingResult.hasErrors()) {
+            formErrors = bindingResult.getAllErrors().stream()
+                    .map(e -> e.getDefaultMessage())
+                    .collect(Collectors.toList());
+        } else if (!isPasswordConfirmationValid(signupDTO)) {
             signupMismatch = true;
-        } else if (playerRepository.findByUsername(username).isPresent()) {
+        } else if (!isUsernameAvailable(signupDTO.username())) {
             signupConflict = true;
         } else {
             try {
-                Player player = new Player();
-                player.setUsername(username);
-                player.setPassword(passwordEncoder.encode(password));
-                playerRepository.save(player);
-
+                createPlayer(signupDTO);
                 return "redirect:/auth/login?signupSuccess";
             } catch (Exception e) {
                 signupError = true;
             }
         }
-
         model.addAttribute("signupConflict", signupConflict);
         model.addAttribute("signupMismatch", signupMismatch);
         model.addAttribute("signupError", signupError);
+        model.addAttribute("signupFormErrors", formErrors);
         return "signup";
     }
 
+    // Hilfsmethoden
+    private boolean isUsernameAvailable(String username) {
+        return playerRepository.findByUsername(username).isEmpty();
+    }
+
+    private boolean isPasswordConfirmationValid(SignupDTO dto) {
+        return dto.password().equals(dto.passwordConfirmation());
+    }
+
+    private void createPlayer(SignupDTO dto) {
+        Player player = new Player();
+        player.setUsername(dto.username());
+        player.setPassword(passwordEncoder.encode(dto.password()));
+        playerRepository.save(player);
+    }
 }
