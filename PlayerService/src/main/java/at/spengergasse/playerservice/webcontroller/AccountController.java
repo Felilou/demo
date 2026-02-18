@@ -3,7 +3,6 @@ package at.spengergasse.playerservice.webcontroller;
 import at.spengergasse.playerservice.model.Player;
 import at.spengergasse.playerservice.persistance.PlayerRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,7 +48,7 @@ public class AccountController {
         if (userDetails != null) {
             player = playerRepository.findByUsername(userDetails.getUsername()).orElse(null);
             if (player != null) {
-                // Username ändern
+
                 if (username != null && !username.isBlank() && !username.equals(player.getUsername())) {
                     Player existing = playerRepository.findByUsername(username).orElse(null);
                     if (existing != null) {
@@ -57,8 +56,8 @@ public class AccountController {
                     } else {
                         player.setUsername(username);
                         usernameSuccess = true;
-                        playerRepository.save(player); // Speichere zuerst den neuen Username
-                        // SecurityContext auf neuen Username aktualisieren
+                        playerRepository.save(player);
+
                         UserDetails updatedUser = org.springframework.security.core.userdetails.User
                             .withUsername(username)
                             .password(player.getPassword())
@@ -72,7 +71,7 @@ public class AccountController {
                         SecurityContextHolder.getContext().setAuthentication(newAuth);
                     }
                 }
-                // Passwort ändern
+
                 if (password != null && !password.isBlank()) {
                     if (password.equals(passwordConfirm)) {
                         player.setPassword(passwordEncoder.encode(password));
