@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="de" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/default}">
 <head>
@@ -17,32 +17,58 @@
                     </div>
                     <div th:if="${player != null}">
                         <!-- Username Update Form -->
-                        <form th:action="@{/auth/account}" method="post" class="mb-4">
+                        <form th:action="@{/auth/account}" th:object="${updateUsernameDTO}" method="post">
                             <div class="mb-3">
-                                <label class="form-label">Neuer Username</label>
-                                <input type="text" name="username" th:value="${player.username}" class="form-control" required />
+                                <label class="form-label" for="account-username">Neuer Username</label>
+                                <input id="account-username" type="text" th:field="*{username}" class="form-control"
+                                       required />
+                                <div th:if="${#fields.hasErrors('username')}" class="text-danger"
+                                     th:errors="*{username}"></div>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">Username ändern</button>
+                            <button type="submit" name="updateUsername" class="btn btn-primary w-100">Username ändern
+                            </button>
                         </form>
                         <div class="mt-2">
+                            <div th:if="${usernameFormErrors != null}" class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <li th:each="err : ${usernameFormErrors}" th:text="${err}"></li>
+                                </ul>
+                            </div>
                             <div th:if="${usernameSuccess}" class="alert alert-success">Username erfolgreich geändert!</div>
-                            <div th:if="${usernameConflict}" class="alert alert-danger">Dieser Username ist bereits vergeben!</div>
+                            <div th:if="${usernameConflict}" class="alert alert-danger">Dieser Username ist bereits
+                                vergeben!
+                            </div>
                         </div>
                         <!-- Password Update Form -->
-                        <form th:action="@{/auth/account}" method="post">
+                        <form th:action="@{/auth/account}" th:object="${updatePasswordDTO}" method="post">
                             <div class="mb-3">
-                                <label class="form-label">Neues Passwort</label>
-                                <input type="password" name="password" class="form-control" placeholder="Neues Passwort" required />
+                                <label class="form-label" for="account-newPassword">Neues Passwort</label>
+                                <input id="account-newPassword" type="password" th:field="*{newPassword}"
+                                       class="form-control" placeholder="Neues Passwort" required />
+                                <div th:if="${#fields.hasErrors('newPassword')}" class="text-danger"
+                                     th:errors="*{newPassword}"></div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Passwort bestätigen</label>
-                                <input type="password" name="passwordConfirm" class="form-control" placeholder="Passwort bestätigen" required />
+                                <label class="form-label" for="account-newPasswordConfirmation">Passwort bestätigen</label>
+                                <input id="account-newPasswordConfirmation" type="password"
+                                       th:field="*{newPasswordConfirmation}" class="form-control"
+                                       placeholder="Passwort bestätigen" required />
+                                <div th:if="${#fields.hasErrors('newPasswordConfirmation')}" class="text-danger"
+                                     th:errors="*{newPasswordConfirmation}"></div>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">Passwort ändern</button>
+                            <button type="submit" name="updatePassword" class="btn btn-primary w-100">Passwort ändern
+                            </button>
                         </form>
                         <div class="mt-2">
+                            <div th:if="${passwordFormErrors != null}" class="alert alert-danger">
+                                <ul class="mb-0">
+                                    <li th:each="err : ${passwordFormErrors}" th:text="${err}"></li>
+                                </ul>
+                            </div>
                             <div th:if="${passwordSuccess}" class="alert alert-success">Passwort erfolgreich geändert!</div>
-                            <div th:if="${passwordMismatch}" class="alert alert-danger">Die Passwörter stimmen nicht überein!</div>
+                            <div th:if="${passwordMismatch}" class="alert alert-danger">Die Passwörter stimmen nicht
+                                überein!
+                            </div>
                         </div>
                     </div>
                 </div>
