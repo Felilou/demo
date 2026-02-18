@@ -28,4 +28,55 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.15.0</version>
+
+                <executions>
+
+                    <!-- Node & npm installieren -->
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v20.11.0</nodeVersion>
+                            <npmVersion>10.2.4</npmVersion>
+                        </configuration>
+                    </execution>
+
+                    <!-- npm install ausführen -->
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+
+                    <!-- SCSS kompilieren -->
+                    <execution>
+                        <id>build css</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build-css</arguments>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
 </project>
