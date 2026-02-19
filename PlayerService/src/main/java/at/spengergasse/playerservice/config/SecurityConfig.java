@@ -19,18 +19,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/login", "/auth/signup").permitAll()
-                .anyRequest().authenticated())
-            .formLogin(login -> login
-                .loginPage("/auth/login")
-                .defaultSuccessUrl("/auth/account", true)
-                .permitAll())
-            .logout(logout -> logout
-                .logoutUrl("/auth/logout")
-                .logoutSuccessUrl("/auth/login?logout")
-                .permitAll());
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/login", "/auth/signup", "/css/**", "/js/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/auth/login") // GET: zeigt dein eigenes Login-Formular
+                        .loginProcessingUrl("/auth/login") // POST: verarbeitet die Formulardaten
+                        .defaultSuccessUrl("/account", true)
+                        .failureUrl("/auth/login?error=true")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/auth/logout")
+                        .logoutSuccessUrl("/auth/login?logout=true")
+                        .permitAll()
+                );
         return http.build();
     }
 }
