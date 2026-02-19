@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>at.spengergasse</groupId>
-    <artifactId>MatchmakingService</artifactId>
+    <artifactId>CharacterService</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>MatchmakingService</name>
     <description>MatchmakingService</description>

@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>at.spengergasse</groupId>
-    <artifactId>MulitplayerPong</artifactId>
+    <artifactId>StoryAIdventure</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>MulitplayerPong</name>
-    <description>MulitplayerPong</description>
+    <name>StoryAIdventure</name>
+    <description>StoryAIdventure</description>
     <url/>
     <licenses>
         <license/>
@@ -30,9 +30,11 @@
         <java.version>25</java.version>
     </properties>
     <modules>
-        <module>PlayerService</module>
+        <module>UserService</module>
         <module>GameService</module>
-        <module>MatchmakingService</module>
+        <module>CharacterService</module>
+        <module>Gateway</module>
+        <module>ServiceDiscovery</module>
     </modules>
 
     <packaging>pom</packaging>
