@@ -1,13 +1,13 @@
-package at.spengergasse.matchmakingservice;
+package at.spengergasse.characterservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MatchmakingServiceApplication {
+public class CharacterServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MatchmakingServiceApplication.class, args);
+        SpringApplication.run(CharacterServiceApplication.class, args);
     }
 
 }

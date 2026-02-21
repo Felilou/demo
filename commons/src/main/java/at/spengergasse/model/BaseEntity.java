@@ -1,5 +1,6 @@
 package at.spengergasse.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -8,7 +9,8 @@ import java.util.UUID;
 
 public abstract class BaseEntity extends AbstractPersistable<Long> {
 
-    UUID uuid;
+    @Column(unique = true)
+    private UUID uuid;
 
     @PrePersist
     public void prePersist() {

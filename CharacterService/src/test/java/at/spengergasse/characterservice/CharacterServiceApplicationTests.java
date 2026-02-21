@@ -1,10 +1,10 @@
-package at.spengergasse.matchmakingservice;
+package at.spengergasse.characterservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MatchmakingServiceApplicationTests {
+class CharacterServiceApplicationTests {
 
     @Test
     void contextLoads() {
