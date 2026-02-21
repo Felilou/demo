@@ -20,4 +20,7 @@ public abstract class BaseEntity extends AbstractPersistable<Long> {
         this.uuid = null;
     }
 
+    public UUID getUuid() {
+        return this.uuid;
+    }
 }
